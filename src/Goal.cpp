@@ -7,7 +7,7 @@
 
 Goal::Goal(int x, int y, int w, int h) : RectBase(x, y, w, h) {
     const int square_size = 5;
-    if (w % square_size != 0 || h % square_size !=0) {
+    if (w % square_size != 0 || h % square_size != 0) {
         SDL_Log("Goal::Goal: width(%d) & height(%d) must be divisible by %d", w, h, square_size);
     }
     const int num_rows = h / square_size;
