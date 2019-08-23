@@ -20,6 +20,8 @@ Game::Game(const Uint32 t_width, const Uint32 t_height, const Uint32 t_fps) :
         m_new_level(SDL_TRUE),
         m_controls(SDL_GetKeyboardState(nullptr)) {
 
+    SDL_Log("Game::Game");
+
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         SDL_Quit();
@@ -38,27 +40,25 @@ Game::Game(const Uint32 t_width, const Uint32 t_height, const Uint32 t_fps) :
         SDL_Log("Unable to create renderer: %s", SDL_GetError());
         SDL_Quit();
     }
-
-    //SDL_Set
-    std::cout << "constructed game" << std::endl;
 }
 
 Game::~Game() {
+    SDL_Log("Game::~Game");
     SDL_DestroyWindow(m_window);
     SDL_DestroyRenderer(m_renderer);
     SDL_Quit();
-    std::cout << "destructed game" << std::endl;
 }
 
 void Game::start() {
-    std::cout << "start" << std::endl;
+    SDL_Log("Game::start");
+
+    m_running = SDL_TRUE;
 
     const Uint32 frame_delay = 1000 / m_fps;
 
     Uint32 frame_start;
-    Uint32 frame_duration;
 
-    m_running = SDL_TRUE;
+    Uint32 frame_duration;
 
     //spawnGoal();
     //spawnWalls();
@@ -92,65 +92,58 @@ void Game::start() {
 }
 
 void Game::spawnPlayer() {
+    SDL_Log("Game::spawnPlayer");
+
     m_player.y = m_height - m_player.h - 10;
+
     m_player.x = 150;// todo random x value
 }
 
 void Game::input() {
-    //std::cout << "input" << std::endl;
+    //SDL_Log("input");
+
     SDL_Event event;
+
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
-                std::cout << "quit1" << std::endl;
                 m_running = SDL_FALSE;
-                std::cout << "quit2" << std::endl;
                 return;
-                //break;
             default:
                 break;
         }
     }
-
-    //std::cout << "after" << std::endl;
 
     if (m_controls.escapeKey()) {
         m_running = SDL_FALSE;
         return;
     }
 
-    if (m_controls.upKey()) {
-        m_player.y -= 1;
+    int moveBy = m_controls.spaceKey() ? 5 : 2;
+
+    if (m_controls.downKey() ^ m_controls.upKey()) {
+        m_player.y += m_controls.downKey() ? moveBy : -moveBy;
     }
 
-    if (m_controls.downKey()) {
-        m_player.y += 10;
+    if (m_controls.rightKey() ^ m_controls.leftKey()) {
+        m_player.x += m_controls.rightKey() ? moveBy : -moveBy;
     }
 
-    if (m_controls.rightKey()) {
-        m_player.x += 10;
-    }
-
-    if (m_controls.leftKey()) {
-        m_player.x -= 10;
-    }
 }
 
 void Game::update() {
-    //std::cout << "update" << std::endl;
-    //std::cout << m_player.y << " " << m_goal.y + m_goal.h << std::endl;
-    if (SDL_HasIntersection(&m_player, &m_goal)) {
-        //std::cout << m_player.y << " " << m_goal.y + m_goal.h << std::endl;
+    //SDL_Log("update");
+
+    if (m_player.isCollide(&m_goal)) {
         m_new_level = SDL_TRUE;
+        return;
     }
 
-    //if (m_player.y < 20) {
-    //  m_new_level = SDL_TRUE;
-    //}
 }
 
 void Game::render() {
-    //std::cout << "render" << std::endl;
+    //SDL_Log("render");
+
     SDL_RenderClear(m_renderer);
 
     m_player.render(m_renderer);
