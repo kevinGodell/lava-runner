@@ -12,6 +12,8 @@ public:
     RectBase(int x, int y, int w, int h);
 
     virtual void render(SDL_Renderer *t_renderer) = 0;
+
+    SDL_bool isCollide(const SDL_Rect *t_other_rect);
 };
 
 #endif //LAVA_RUNNER_RECTBASE_HPP
