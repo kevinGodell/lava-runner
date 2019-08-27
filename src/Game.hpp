@@ -7,46 +7,65 @@
 
 #include "Player.hpp"
 #include "Goal.hpp"
+#include "RisingLava.hpp"
+#include "LavaPools.hpp"
 #include "Controls.hpp"
 #include <SDL.h>
 
 class Game {
 public:
+    enum class State {
+        INIT,
+        PAUSE,
+        START,
+        PLAY,
+        END
+    };
+
+    enum Speed {
+        LOW = 2,
+        HIGH = 5
+    };
+
     Game(Uint32 t_width, Uint32 t_height, Uint32 t_fps);
 
     ~Game();
 
-    void start();
+    void run();
 
     Uint32 score() const { return m_score; };
 
     Uint32 level() const { return m_level; };
+
+    State state() const { return m_state; };
 
 private:
     const Uint32 m_width;
     const Uint32 m_height;
     const Uint32 m_fps;
     SDL_bool m_running;
+    State m_state;
     Uint32 m_score;
     Uint32 m_level;
     SDL_Window *m_window;
     SDL_Renderer *m_renderer;
     Player m_player;
-    Goal m_goal;
-    SDL_bool m_new_level;
-    Controls m_controls;
-
-    //void spawnGoal();
-
-    void spawnPlayer();
+    const Goal m_goal;
+    RisingLava m_lava;
+    const Controls m_controls;
+    LavaPools m_lava_pools;
 
     //void spawnObstacles();
 
-    //void spawnWalls();
+    void onInit();
 
-    void input();
+    void onPause();
 
-    void update();
+    void onStart();
+
+    void onPlay();
+
+    void onEnd();
 
     void render();
 };

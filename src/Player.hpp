@@ -5,14 +5,23 @@
 #ifndef LAVA_RUNNER_PLAYER_HPP
 #define LAVA_RUNNER_PLAYER_HPP
 
-#include "RectBase.hpp"
-#include <SDL.h>
+#include "Sprite.hpp"
+#include "SDL.h"
 
-class Player : public RectBase {
+class Player : public Sprite {
 public:
-    Player(int x, int y, int w, int h);
+    Player(int t_x, int t_y, int t_w, int t_h);
 
-    void render(SDL_Renderer *t_renderer) override;
+    void render(SDL_Renderer *t_renderer) const override;
+
+    void incX(int t_x);// rect.x += t_x
+
+    void incY(int t_y);// rect.y += t_y
+
+    void setX(int t_x);// rect.x = t_x
+
+    void setY(int t_y);// rect.y = t_y
+
 };
 
 #endif //LAVA_RUNNER_PLAYER_HPP

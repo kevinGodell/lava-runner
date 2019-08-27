@@ -5,15 +5,15 @@
 #ifndef LAVA_RUNNER_GOAL_HPP
 #define LAVA_RUNNER_GOAL_HPP
 
-#include "RectBase.hpp"
-#include <SDL.h>
+#include "Sprite.hpp"
+#include "SDL.h"
 #include <vector>
 
-class Goal : public RectBase {
+class Goal final: public Sprite {
 public:
-    Goal(int x, int y, int w, int h);
+    Goal(int t_x, int t_y, int t_w, int t_h);
 
-    void render(SDL_Renderer *t_renderer) override;
+    void render(SDL_Renderer *t_renderer) const override;
 
 private:
     std::vector<SDL_Rect> m_grid;

@@ -7,7 +7,7 @@
 
 #include <SDL.h>
 
-class Controls {
+class Controls final {
 public:
 
     explicit Controls(const Uint8 *t_keyboard_state);
