@@ -5,8 +5,7 @@
 #include "Player.hpp"
 #include "SDL.h"
 
-Player::Player(int t_x, int t_y, int t_w, int t_h) :
-        Sprite{t_x, t_y, t_w, t_h} {}
+Player::Player(int t_x, int t_y, int t_w, int t_h) : Sprite(t_x, t_y, t_w, t_h) {}
 
 void Player::render(SDL_Renderer *t_renderer) const {
     SDL_SetRenderDrawColor(t_renderer, 255, 255, 0, 255);

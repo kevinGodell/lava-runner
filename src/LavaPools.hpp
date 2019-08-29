@@ -7,26 +7,29 @@
 
 #include "SDL.h"
 #include "Sprite.hpp"
-#include "LavaPool.hpp"
+//#include "LavaPool.hpp"
+#include "Lava.hpp"
 #include <vector>
 
 class LavaPools {
 public:
-    LavaPools(int t_x, int t_y, int t_w, int t_h, Uint32 t_row_count, Uint32 t_count_per_row);
+    LavaPools(int t_x, int t_y, int t_w, int t_h, double t_pool_density = 1.0);
+
     void render(SDL_Renderer *t_renderer) const;
+
     SDL_bool isCollide(const Sprite &t_other_sprite) const;
 
+    void generatePools();
+
+    void setPoolDensity(double t_pool_density);
+
 private:
-    mutable Uint8 m_green_level;
     int m_x;
     int m_y;
     int m_w;
     int m_h;
-    Uint32 m_row_count;
-    Uint32 m_count_per_row;
-    std::vector<SDL_Rect> m_lava_pools;
-    std::vector<LavaPool> m_lava_pools2;
+    std::vector<Lava> m_lava_pools;
+    double m_pool_density;
 };
-
 
 #endif //LAVA_RUNNER_LAVAPOOLS_HPP

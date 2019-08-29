@@ -9,7 +9,7 @@
 #include "SDL.h"
 #include <vector>
 
-class Goal final: public Sprite {
+class Goal final : public Sprite {
 public:
     Goal(int t_x, int t_y, int t_w, int t_h);
 

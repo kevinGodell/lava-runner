@@ -4,46 +4,59 @@
 
 #include "LavaPools.hpp"
 #include "Sprite.hpp"
-#include "LavaPool.hpp"
 #include "SDL.h"
 #include <utility>
-
-LavaPools::LavaPools(int t_x, int t_y, int t_w, int t_h, Uint32 t_row_count, Uint32 t_count_per_row) :
-        m_green_level{255},
-        m_x{t_x},
-        m_y{t_y},
-        m_w{t_w},
-        m_h{t_h},
-        m_row_count{t_row_count},
-        m_count_per_row{t_count_per_row} {
-    m_lava_pools.emplace_back(SDL_Rect{30, 30, 20, 20});
-    m_lava_pools.emplace_back(SDL_Rect{70, 130, 20, 20});
-    m_lava_pools.emplace_back(SDL_Rect{120, 230, 20, 20});
-    m_lava_pools.emplace_back(SDL_Rect{30, 330, 20, 20});
-    m_lava_pools.emplace_back(SDL_Rect{300, 30, 20, 20});
-
-    m_lava_pools2.emplace_back(LavaPool{100,200,30,40});
-    m_lava_pools2.emplace_back(LavaPool{150,250,50,80});
+#include <string>
+#include <iostream>
+#include <random>
+#include <map>
 
 
-}
+LavaPools::LavaPools(int t_x, int t_y, int t_w, int t_h, double t_pool_density) :
+        m_x(t_x),
+        m_y(t_y),
+        m_w(t_w),
+        m_h(t_h),
+        m_pool_density(t_pool_density) {}
 
 void LavaPools::render(SDL_Renderer *t_renderer) const {
-    SDL_RenderFillRects(t_renderer, m_lava_pools.data(), m_lava_pools.size());
-
-    for (const LavaPool& lava_pool : m_lava_pools2) {
+    for (const Lava &lava_pool : m_lava_pools) {
         lava_pool.render(t_renderer);
     }
 }
 
 SDL_bool LavaPools::isCollide(const Sprite &t_other_sprite) const {
-    for (const SDL_Rect& rect : m_lava_pools) {
-        if (SDL_HasIntersection(&rect, &t_other_sprite.rect())) return SDL_TRUE;
-    }
-
-    for (const LavaPool& lava_pool : m_lava_pools2) {
+    for (const Lava &lava_pool : m_lava_pools) {
         if (lava_pool.isCollide(t_other_sprite)) return SDL_TRUE;
     }
-
     return SDL_FALSE;
+}
+
+void LavaPools::setPoolDensity(double t_pool_density) {
+    if (t_pool_density < 1) {
+        m_pool_density = 1;
+    } else if (t_pool_density > 6) {
+        m_pool_density = 6;
+    } else {
+        m_pool_density = t_pool_density;
+    }
+}
+
+void LavaPools::generatePools() {
+    m_lava_pools.clear();
+    Uint32 pool_height = 10;
+    Uint32 pool_width = 50;
+    Uint32 row_gap = 50;
+    Uint32 rows = m_h / (pool_height + row_gap);
+    Uint32 cols = m_w / pool_width;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::discrete_distribution<int> dd({10 - m_pool_density, m_pool_density});
+    for (int row = 0, y = m_y; row < rows; ++row, y += pool_height + row_gap) {
+        for (int col = 0, x = m_x; col < cols; ++col, x += pool_width) {
+            if (dd(gen)) {
+                m_lava_pools.emplace_back(Lava(x, y, pool_width, pool_height));
+            }
+        }
+    }
 }

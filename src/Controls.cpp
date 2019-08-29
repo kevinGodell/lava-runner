@@ -3,7 +3,7 @@
 //
 
 #include "Controls.hpp"
-#include <SDL.h>
+#include "SDL.h"
 
 Controls::Controls(const Uint8 *t_keyboard_state) : m_keyboard_state(t_keyboard_state) {}
 

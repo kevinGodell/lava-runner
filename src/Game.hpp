@@ -10,7 +10,8 @@
 #include "RisingLava.hpp"
 #include "LavaPools.hpp"
 #include "Controls.hpp"
-#include <SDL.h>
+#include "SDL.h"
+#include <string>
 
 class Game {
 public:
@@ -33,9 +34,9 @@ public:
 
     void run();
 
-    Uint32 score() const { return m_score; };
+    Uint32 currentScore() const { return m_current_score; }
 
-    Uint32 level() const { return m_level; };
+    Uint32 highScore() const { return m_high_score; }
 
     State state() const { return m_state; };
 
@@ -43,19 +44,19 @@ private:
     const Uint32 m_width;
     const Uint32 m_height;
     const Uint32 m_fps;
+    const Uint32 m_frame_delay;
     SDL_bool m_running;
     State m_state;
-    Uint32 m_score;
-    Uint32 m_level;
+    Uint32 m_current_score;
+    Uint32 m_high_score;
     SDL_Window *m_window;
     SDL_Renderer *m_renderer;
     Player m_player;
     const Goal m_goal;
-    RisingLava m_lava;
+    RisingLava m_rising_lava;
     const Controls m_controls;
     LavaPools m_lava_pools;
-
-    //void spawnObstacles();
+    std::string m_window_title;
 
     void onInit();
 
@@ -68,6 +69,8 @@ private:
     void onEnd();
 
     void render();
+
+    void incScore();
 };
 
 #endif //LAVA_RUNNER_GAME_HPP

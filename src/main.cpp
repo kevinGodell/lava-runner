@@ -9,7 +9,7 @@ constexpr int FPS = 60;
 int main() {
     auto game = std::make_unique<Game>(WIDTH, HEIGHT, FPS);
     game->run();
-    std::cout << "Score: " << game->score() << std::endl;
-    std::cout << "Level: " << game->level() << std::endl;
+    std::cout << "Score: " << game->currentScore() << std::endl;
+    std::cout << "High Score: " << game->highScore() << std::endl;
     return 0;
 }

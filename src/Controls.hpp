@@ -5,7 +5,7 @@
 #ifndef LAVA_RUNNER_CONTROLS_HPP
 #define LAVA_RUNNER_CONTROLS_HPP
 
-#include <SDL.h>
+#include "SDL.h"
 
 class Controls final {
 public:
