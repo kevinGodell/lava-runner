@@ -14,7 +14,7 @@ class RisingLava : public Lava {
 public:
     RisingLava(int t_x, int t_y, int t_w, int t_h, Uint32 t_rise_rate = 1, Uint32 t_rise_interval = 100);
 
-    ~RisingLava();
+    ~RisingLava() override;
 
     const SDL_Rect &rect() const override;
 

@@ -28,7 +28,7 @@ public:
         HIGH = 5
     };
 
-    Game(Uint32 t_width, Uint32 t_height, Uint32 t_fps);
+    Game(int t_width, Uint32 t_height, Uint32 t_fps);
 
     ~Game();
 
@@ -41,9 +41,8 @@ public:
     State state() const { return m_state; };
 
 private:
-    const Uint32 m_width;
-    const Uint32 m_height;
-    const Uint32 m_fps;
+    const int m_width;
+    const int m_height;
     const Uint32 m_frame_delay;
     SDL_bool m_running;
     State m_state;
@@ -57,6 +56,9 @@ private:
     const Controls m_controls;
     LavaPools m_lava_pools;
     std::string m_window_title;
+    int m_frame_count;
+    Uint32 m_time_stamp;
+    SDL_bool m_in_lava_pit;
 
     void onInit();
 

@@ -2,9 +2,9 @@
 #include "Game.hpp"
 #include <memory>
 
-constexpr int WIDTH = 600;
-constexpr int HEIGHT = 600;
-constexpr int FPS = 60;
+constexpr Uint32 WIDTH = 600;
+constexpr Uint32 HEIGHT = 600;
+constexpr Uint32 FPS = 60;
 
 int main() {
     auto game = std::make_unique<Game>(WIDTH, HEIGHT, FPS);

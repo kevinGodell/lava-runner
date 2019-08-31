@@ -5,7 +5,9 @@
 #include "Sprite.hpp"
 #include "SDL.h"
 
-Sprite::Sprite(int t_x, int t_y, int t_w, int t_h) : m_rect{t_x, t_y, t_w, t_h} {}
+Sprite::Sprite(int t_x, int t_y, int t_w, int t_h) : m_rect(SDL_Rect{t_x, t_y, t_w, t_h}) {}
+
+Sprite::~Sprite() = default;
 
 const SDL_Rect &Sprite::rect() const {
     return m_rect;

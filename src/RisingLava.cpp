@@ -32,7 +32,7 @@ void RisingLava::startRising() {
     m_is_rising = SDL_TRUE;
     m_rising_thread = std::thread([this]() {
         while (m_is_rising) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(m_rise_interval));
+            SDL_Delay(m_rise_interval);
             std::lock_guard<std::mutex> lock_guard(m_mutex);
             m_rect.y -= m_rise_rate;
             m_rect.h += m_rise_rate;
@@ -48,7 +48,7 @@ void RisingLava::stopRising() {
     m_rising_thread.join();
 }
 
-void RisingLava::setRiseRate(Uint32 t_rise_rate) {
+void RisingLava::setRiseRate(const Uint32 t_rise_rate) {
     std::lock_guard<std::mutex> lock_guard(m_mutex);
     if (t_rise_rate > 5) {
         m_rise_rate = 5;
