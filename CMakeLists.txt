@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_compile_options("-Wall" "-Wendif-labels" "-W" "-Werror" "-Wextra" "-Wpedantic" "-Wunused-parameter")
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
-find_package(Threads REQUIRED)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 find_package(Threads REQUIRED)
 
