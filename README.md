@@ -54,3 +54,33 @@ make
 - RisingLava runs in a detached thread that increases its size at a specified rate.
 
 ## Project Rubrics
+- ###### The project demonstrates an understanding of C++ functions and control structures.
+  - Game.cpp line 71
+- ###### The project accepts user input and processes the input.
+  - Game.cpp line 148
+- ###### The project uses Object Oriented Programming techniques.
+  - Game.cpp line 101
+- ###### Classes use appropriate access specifiers for class members.
+  - Game.hpp line 17
+- ###### Class constructors utilize member initialization lists.
+  - Game.cpp line 8
+- ###### Classes abstract implementation details from their interfaces.
+  - LavaPools.hpp line 22
+- ###### Classes encapsulate behavior.
+  - RisingLava.cpp line 41
+- ###### Classes follow an appropriate inheritance hierarchy.
+  - RisingLava inherits from Lava which inherits from Sprite
+- ###### Derived class functions override virtual base class functions.
+  - Player.cpp line 11
+- ###### The project makes use of references in function declarations.
+  - Sprite.hpp line 21
+- ###### The project uses destructors appropriately.
+  - Game.cpp line 26
+- ###### The project uses scope / Resource Acquisition Is Initialization (RAII) where appropriate.
+  - LavaPools.cpp line 60
+- ###### The project uses smart pointers instead of raw pointers.
+  - LavaPools.cpp line 60
+- ###### The project uses multithreading.
+  - RisingLava.cpp line 44
+- ###### A mutex or lock is used in the project.
+  - RisingLava.cpp line 47
