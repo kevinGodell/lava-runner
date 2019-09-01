@@ -63,11 +63,13 @@ void RisingLava::setRiseValue(Uint32 t_rise_value) {
     std::lock_guard<std::mutex> lock_guard(m_mutex);
     if (t_rise_value > 5) {
         m_rise_value = 5;
-    } else if (t_rise_value < 1) {
-        m_rise_value = 1;
-    } else {
-        m_rise_value = t_rise_value;
+        return;
     }
+    if (t_rise_value < 1) {
+        m_rise_value = 1;
+        return;
+    }
+    m_rise_value = t_rise_value;
 }
 
 // check if lava is rising
