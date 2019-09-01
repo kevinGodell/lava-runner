@@ -9,6 +9,7 @@
 #include "Sprite.hpp"
 #include "Lava.hpp"
 #include <vector>
+#include <memory>
 
 class LavaPools : public Sprite {
 public:
@@ -23,11 +24,11 @@ public:
     void setPoolDensity(int t_pool_density);
 
 private:
-    std::vector<Lava> m_lava_pools;
+    const int m_pool_height;
+    const int m_pool_width;
+    const int m_vertical_gap;
     int m_pool_density;
-    int m_pool_height;
-    int m_pool_width;
-    int m_vertical_gap;
+    std::vector<std::unique_ptr<const Lava>> m_lava_pools;
 };
 
 #endif //LAVA_RUNNER_LAVAPOOLS_HPP

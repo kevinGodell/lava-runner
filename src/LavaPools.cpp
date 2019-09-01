@@ -7,25 +7,27 @@
 #include "SDL.h"
 #include <random>
 #include <array>
+#include <vector>
+#include <memory>
 
 LavaPools::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         Sprite(t_x, t_y, t_w, t_h),
-        m_pool_density(1),
         m_pool_height(10),
         m_pool_width(50),
-        m_vertical_gap(50) {}
+        m_vertical_gap(50),
+        m_pool_density(1) {}
 
 void LavaPools::render(SDL_Renderer *t_renderer) const {
     SDL_SetRenderDrawColor(t_renderer, 142, 113, 12, 255);
     SDL_RenderFillRect(t_renderer, &m_rect);
-    for (const Lava &lava_pool : m_lava_pools) {
-        lava_pool.render(t_renderer);
+    for (const std::unique_ptr<const Lava> &lava_pool : m_lava_pools) {
+        lava_pool->render(t_renderer);
     }
 }
 
 SDL_bool LavaPools::isCollide(const Sprite &t_other_sprite) const {
-    for (const Lava &lava_pool : m_lava_pools) {
-        if (lava_pool.isCollide(t_other_sprite)) return SDL_TRUE;
+    for (const std::unique_ptr<const Lava> &lava_pool : m_lava_pools) {
+        if (lava_pool->isCollide(t_other_sprite)) return SDL_TRUE;
     }
     return SDL_FALSE;
 }
@@ -54,7 +56,7 @@ void LavaPools::generatePools() {
         bool row_has_space = false;//make sure that entire row is not filled with lava blocking safe passage
         for (int col = 0, x = m_rect.x; col < cols; ++col, x += m_pool_width) {
             if (dd(gen)) {
-                m_lava_pools.emplace_back(Lava(x, y, m_pool_width, m_pool_height));
+                m_lava_pools.emplace_back(std::make_unique<const Lava>(x, y, m_pool_width, m_pool_height));
             } else {
                 row_has_space = true;
             }
