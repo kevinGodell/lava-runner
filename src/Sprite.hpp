@@ -7,7 +7,7 @@
 
 #include "SDL.h"
 
-// base class for Player, Lava, LavaPools
+// base class for Player, Goal, Lava, LavaPools
 class Sprite {
 public:
     Sprite(int t_x, int t_y, int t_w, int t_h);// constructor with values to define hit area rect
