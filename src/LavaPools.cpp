@@ -5,11 +5,7 @@
 #include "LavaPools.hpp"
 #include "Sprite.hpp"
 #include "SDL.h"
-#include <utility>
-#include <string>
-#include <iostream>
 #include <random>
-#include <map>
 
 LavaPools::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         Sprite(t_x, t_y, t_w, t_h),
@@ -19,10 +15,8 @@ LavaPools::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         m_vertical_gap(50) {}
 
 void LavaPools::render(SDL_Renderer *t_renderer) const {
-    //#if DEBUG
-    //SDL_SetRenderDrawColor(t_renderer, 0,0,0,0);
-    //SDL_RenderDrawRect(t_renderer, &m_rect);
-    //#endif
+    SDL_SetRenderDrawColor(t_renderer, 142, 113, 12, 255);
+    SDL_RenderFillRect(t_renderer, &m_rect);
     for (const Lava &lava_pool : m_lava_pools) {
         lava_pool.render(t_renderer);
     }
@@ -36,12 +30,12 @@ SDL_bool LavaPools::isCollide(const Sprite &t_other_sprite) const {
 }
 
 void LavaPools::setPoolDensity(const double t_pool_density) {
-    if (t_pool_density > 7) {
-        m_pool_density = 7;
+    if (t_pool_density > 7.0) {
+        m_pool_density = 7.0;
         return;
     }
-    if (t_pool_density < 1) {
-        m_pool_density = 1;
+    if (t_pool_density < 1.0) {
+        m_pool_density = 1.0;
         return;
     }
     m_pool_density = t_pool_density;
@@ -49,7 +43,7 @@ void LavaPools::setPoolDensity(const double t_pool_density) {
 
 void LavaPools::generatePools() {
     m_lava_pools.clear();
-    int rows = m_rect.h / (m_pool_height + m_vertical_gap);
+    int rows = (m_rect.h + m_vertical_gap) / (m_pool_height + m_vertical_gap);
     int cols = m_rect.w / m_pool_width;
     std::random_device rd;
     std::mt19937 gen(rd());

@@ -32,13 +32,13 @@ public:
 
 
 private:
+    const Uint32 m_rise_start_y;
+    const Uint32 m_rise_start_h;
     Uint32 m_rise_rate;
     Uint32 m_rise_interval;
     SDL_bool m_is_rising;
     std::thread m_rising_thread;
     mutable std::mutex m_mutex;
-    const Uint32 m_rise_start_y;
-    const Uint32 m_rise_start_h;
 };
 
 

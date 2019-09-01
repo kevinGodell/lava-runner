@@ -4,9 +4,8 @@
 
 #include "Game.hpp"
 #include "SDL.h"
-#include <iostream>
 
-Game::Game(const int t_width, const Uint32 t_height, const Uint32 t_fps) :
+Game::Game(const Uint32 t_width, const Uint32 t_height, const Uint32 t_fps) :
         m_width(t_width),
         m_height(t_height),
         m_frame_delay{1000 / t_fps},
@@ -18,12 +17,11 @@ Game::Game(const int t_width, const Uint32 t_height, const Uint32 t_fps) :
         m_renderer(nullptr),
         m_player(0, 0, 20, 20),
         m_goal(0, 0, m_width, 20),
-        m_rising_lava(0, m_height, m_width, 0, 1, 100),
+        m_rising_lava(0, m_height - 2, m_width, 2, 1, 100),
         m_controls(SDL_GetKeyboardState(nullptr)),
-        m_lava_pools(0, 60, m_width, m_height - 120),
+        m_lava_pools(0, 70, m_width, m_height - 170),
         m_frame_count(0),
-        m_time_stamp(0),
-        m_in_lava_pit(SDL_FALSE) {
+        m_time_stamp(0) {
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -39,12 +37,16 @@ Game::Game(const int t_width, const Uint32 t_height, const Uint32 t_fps) :
         exit(1);
     }
 
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
 
     if (!m_renderer) {
         SDL_Log("Unable to create renderer: %s", SDL_GetError());
-        SDL_Quit();
-        exit(1);
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
+        if (!m_renderer) {
+            SDL_Log("Unable to create renderer: %s", SDL_GetError());
+            SDL_Quit();
+            exit(1);
+        }
     }
 
     SDL_RenderClear(m_renderer);
@@ -64,17 +66,14 @@ void Game::run() {
 
     while (m_running) {
         switch (m_state) {
-            case State::PLAY:
-                onPlay();
-                break;
             case State::INIT:
                 onInit();
                 break;
+            case State::PLAY:
+                onPlay();
+                break;
             case State::PAUSE:
                 onPause();
-                break;
-            case State::START:
-                onStart();
                 break;
             case State::END:
                 onEnd();
@@ -84,19 +83,17 @@ void Game::run() {
 }
 
 void Game::render() {
-    SDL_SetRenderDrawColor(m_renderer, 181, 101, 29, 255);
+    SDL_SetRenderDrawColor(m_renderer, 154, 132, 28, 255);
     SDL_RenderClear(m_renderer);
     m_goal.render(m_renderer);
-    m_player.render(m_renderer);
     m_lava_pools.render(m_renderer);
+    m_player.render(m_renderer);
     m_rising_lava.render(m_renderer);
     SDL_RenderPresent(m_renderer);
 }
 
 // initialize new level
 void Game::onInit() {
-
-    SDL_Delay(500);
 
     m_player.setY(m_height - m_player.rect().h - 40);
     m_player.setX((m_width - m_player.rect().w) / 2);
@@ -108,22 +105,14 @@ void Game::onInit() {
     m_lava_pools.generatePools();
 
     render();
-    m_state = State::PAUSE;
+
+    setState(State::PLAY);
 }
 
-// wait for user input to play
+// wait for user input to un-pause
 void Game::onPause() {
 
-    m_window_title = "Status: paused, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score);
-
-    SDL_SetWindowTitle(m_window, m_window_title.c_str());
-
     m_rising_lava.stopRising();
-
-    SDL_PumpEvents();
-    SDL_FlushEvent(SDL_KEYDOWN);
-
-    SDL_Delay(500);
 
     SDL_Event event;
 
@@ -135,25 +124,18 @@ void Game::onPause() {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
-                        m_state = State::END;
+                        setState(State::END);
                         return;
                     case SDLK_UP:
                     case SDLK_RIGHT:
                     case SDLK_DOWN:
                     case SDLK_LEFT:
                     case SDLK_SPACE:
-                        m_state = State::START;
+                        setState(State::PLAY);
                         return;
                 }
         }
     }
-}
-
-void Game::onStart() {
-    m_time_stamp = SDL_GetTicks();
-    m_state = State::PLAY;
-    m_window_title = "Status: playing, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score);
-    SDL_SetWindowTitle(m_window, m_window_title.c_str());
 }
 
 void Game::onPlay() {
@@ -169,10 +151,10 @@ void Game::onPlay() {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
-                        m_state = State::END;
+                        setState(State::END);
                         return;
                     case SDLK_RETURN:
-                        m_state = State::PAUSE;
+                        setState(State::PAUSE);
                         return;
                 }
         }
@@ -198,28 +180,22 @@ void Game::onPlay() {
         m_player.setY(m_height - m_player.rect().h);
     }
 
+    if (!m_rising_lava.isRising() && m_player.isCollide(m_lava_pools)) {
+        m_rising_lava.startRising();
+    } else if (m_rising_lava.isRising() && !m_player.isCollide(m_lava_pools)) {
+        m_rising_lava.stopRising();
+    }
+
     if (m_player.isCollide(m_goal)) {
         incScore();
         render();
-        m_state = State::INIT;
+        setState(State::INIT);
         return;
-    }
-
-    if (m_in_lava_pit) {// if in lava pit area, check if player leaves area, turn off rising lava
-        if(!m_player.isCollide(m_lava_pools)) {
-            m_in_lava_pit = SDL_FALSE;
-            m_rising_lava.stopRising();
-        }
-    } else {
-        if(m_player.isCollide(m_lava_pools)) {
-            m_in_lava_pit = SDL_TRUE;
-            m_rising_lava.startRising();
-        }
     }
 
     if (m_rising_lava.isCollide(m_player) || m_lava_pools.isCollide(m_player)) {
         render();
-        m_state = State::END;
+        setState(State::END);
         return;
     }
 
@@ -227,7 +203,7 @@ void Game::onPlay() {
 
     Uint32 frame_end = SDL_GetTicks();
 
-    m_frame_count++;
+    ++m_frame_count;
 
     Uint32 frame_duration = frame_end - frame_start;
 
@@ -244,12 +220,10 @@ void Game::onPlay() {
 }
 
 void Game::onEnd() {
-    m_window_title = "Status: game over, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score);
-    SDL_SetWindowTitle(m_window, m_window_title.c_str());
     render();
     m_rising_lava.stopRising();
     m_current_score = 0;
-    m_state = State::INIT;
+    setState(State::INIT);
 }
 
 void Game::incScore() {
@@ -257,4 +231,31 @@ void Game::incScore() {
     if (m_current_score > m_high_score) {
         m_high_score = m_current_score;
     }
+}
+
+void Game::setTitle(const std::string &title) {
+    SDL_SetWindowTitle(m_window, title.c_str());
+}
+
+void Game::setState(const Game::State state) {
+    std::string status;
+    switch(state) {
+        case State::INIT:
+            status = "initializing";
+            setTitle("Status: initializing, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score));
+            SDL_Delay(500);
+            break;
+        case State::PLAY:
+            setTitle("Status: playing, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score));
+            SDL_Delay(100);
+            break;
+        case State::PAUSE:
+            setTitle("Status: paused, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score));
+            break;
+        case State::END:
+            setTitle("Status: game over, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score));
+            SDL_Delay(1000);
+            break;
+    }
+    m_state = state;
 }

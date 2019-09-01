@@ -17,9 +17,8 @@ class Game {
 public:
     enum class State {
         INIT,
-        PAUSE,
-        START,
         PLAY,
+        PAUSE,
         END
     };
 
@@ -28,7 +27,7 @@ public:
         HIGH = 5
     };
 
-    Game(int t_width, Uint32 t_height, Uint32 t_fps);
+    Game(Uint32 t_width, Uint32 t_height, Uint32 t_fps);
 
     ~Game();
 
@@ -55,16 +54,12 @@ private:
     RisingLava m_rising_lava;
     const Controls m_controls;
     LavaPools m_lava_pools;
-    std::string m_window_title;
     int m_frame_count;
     Uint32 m_time_stamp;
-    SDL_bool m_in_lava_pit;
 
     void onInit();
 
     void onPause();
-
-    void onStart();
 
     void onPlay();
 
@@ -73,6 +68,10 @@ private:
     void render();
 
     void incScore();
+
+    void setTitle(const std::string &title);
+
+    void setState(State state);
 };
 
 #endif //LAVA_RUNNER_GAME_HPP
