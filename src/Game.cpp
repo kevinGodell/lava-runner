@@ -252,7 +252,7 @@ void Game::setState(const Game::State state) {
             break;
         case State::END:
             setTitle("Status: game over, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score));
-            SDL_Delay(1000);
+            SDL_Delay(1500);
             break;
     }
     m_state = state;
