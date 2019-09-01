@@ -14,14 +14,15 @@ public:
 
     void render(SDL_Renderer *t_renderer) const override;
 
-    void incX(int t_x);// rect.x += t_x
+    void resetRect() override;
 
-    void incY(int t_y);// rect.y += t_y
+    void incX(int t_x);
 
-    void setX(int t_x);// rect.x = t_x
+    void incY(int t_y);
 
-    void setY(int t_y);// rect.y = t_y
+    void setX(int t_x);
 
+    void setY(int t_y);
 };
 
 #endif //LAVA_RUNNER_PLAYER_HPP

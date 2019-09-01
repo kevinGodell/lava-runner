@@ -5,18 +5,20 @@
 #include "Goal.hpp"
 #include "SDL.h"
 
-Goal::Goal(int t_x, int t_y, int t_w, int t_h) : Sprite(t_x, t_y, t_w, t_h) {
+Goal::Goal(int t_x, int t_y, int t_w, int t_h) : Sprite(t_x, t_y, t_w, t_h) { createGrid(); }
+
+void Goal::createGrid() {
+    m_grid.clear();
     const int square_size = 5;
-    if (t_w % square_size != 0 || t_h % square_size != 0) {
-        SDL_Log("Goal::Goal: width(%d) & height(%d) must be divisible by %d", t_w, t_h, square_size);
+    if (m_rect.w % square_size != 0 || m_rect.h % square_size != 0) {
+        SDL_Log("Goal::Goal: width(%d) & height(%d) must be divisible by %d", m_rect.w, m_rect.h, square_size);
     }
-    const int num_rows = t_h / square_size;
-    const int num_columns = t_w / square_size;
+    const int num_rows = m_rect.h / square_size;
+    const int num_columns = m_rect.w / square_size;
     bool skip_column = false;
     for (int row = 0; row < num_rows; ++row) {
-        int pos_y = row * square_size + t_y;
-        int pos_x = row % 2 == 0 ? t_x : t_x + square_size;
-        //bool skip_column = row % 2 != 0;
+        int pos_y = row * square_size + m_rect.y;
+        int pos_x = row % 2 == 0 ? m_rect.x : m_rect.x + square_size;
         for (int column = 0; column < num_columns; ++column) {
             if (skip_column) {
                 skip_column = false;
@@ -36,3 +38,4 @@ void Goal::render(SDL_Renderer *t_renderer) const {
     SDL_RenderFillRects(t_renderer, m_grid.data(), m_grid.size());
     SDL_RenderDrawRect(t_renderer, &m_rect);
 }
+

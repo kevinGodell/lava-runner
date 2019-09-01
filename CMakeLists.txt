@@ -16,6 +16,8 @@ find_package(SDL2 REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${THREADS_INCLUDE_DIRS})
 
-add_executable(lava_runner src/main.cpp src/Game.cpp src/Game.hpp src/Controls.cpp src/Controls.hpp src/Sprite.cpp src/Sprite.hpp src/Player.cpp src/Player.hpp src/Goal.cpp src/Goal.hpp src/Lava.cpp src/Lava.hpp src/LavaPools.cpp src/LavaPools.hpp  src/RisingLava.cpp src/RisingLava.hpp)
+add_executable(lava_runner src/main.cpp src/Game.cpp src/Game.hpp src/Controls.cpp src/Controls.hpp src/Sprite.cpp src/Sprite.hpp src/Player.cpp src/Player.hpp src/Goal.cpp src/Goal.hpp src/Lava.cpp src/Lava.hpp src/LavaPools.cpp src/LavaPools.hpp src/RisingLava.cpp src/RisingLava.hpp)
 
 target_link_libraries(lava_runner ${SDL2_LIBRARIES} Threads::Threads)
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")

@@ -8,21 +8,29 @@
 Game::Game(const Uint32 t_width, const Uint32 t_height, const Uint32 t_fps) :
         m_width(t_width),
         m_height(t_height),
-        m_frame_delay{1000 / t_fps},
-        m_running(SDL_FALSE),
+        m_frame_delay(1000 / t_fps),
+        m_controls(SDL_GetKeyboardState(nullptr)),
+        m_goal(0, 0, t_width, 20),
+        m_player((t_width - 20) / 2, t_height - 35, 20, 20),
+        m_lava_pools(0, 60, t_width, t_height - 110),
+        m_rising_lava(0, t_height - 2, t_width, 2),
         m_state(State::INIT),
+        m_running(SDL_FALSE),
+        m_frame_count(0),
+        m_time_stamp(0),
         m_current_score(0),
         m_high_score(0),
         m_window(nullptr),
-        m_renderer(nullptr),
-        m_player(0, 0, 20, 20),
-        m_goal(0, 0, m_width, 20),
-        m_rising_lava(0, m_height - 2, m_width, 2),
-        m_controls(SDL_GetKeyboardState(nullptr)),
-        m_lava_pools(0, 60, m_width, m_height - 110),
-        m_frame_count(0),
-        m_time_stamp(0) {
+        m_renderer(nullptr) { sdlInit(); }
 
+Game::~Game() {
+    SDL_DestroyWindow(m_window);
+    SDL_DestroyRenderer(m_renderer);
+    SDL_Quit();
+}
+
+// initialize SDL
+void Game::sdlInit() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         SDL_Quit();
@@ -37,25 +45,21 @@ Game::Game(const Uint32 t_width, const Uint32 t_height, const Uint32 t_fps) :
         exit(1);
     }
 
+    // try to create accelerated renderer first
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
 
     if (!m_renderer) {
         SDL_Log("Unable to create accelerated renderer: %s", SDL_GetError());
+
+        // fallback to software renderer
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
+
         if (!m_renderer) {
             SDL_Log("Unable to create software renderer: %s", SDL_GetError());
             SDL_Quit();
             exit(1);
         }
     }
-
-    SDL_RenderClear(m_renderer);
-}
-
-Game::~Game() {
-    SDL_DestroyWindow(m_window);
-    SDL_DestroyRenderer(m_renderer);
-    SDL_Quit();
 }
 
 void Game::run() {
@@ -82,6 +86,7 @@ void Game::run() {
     }
 }
 
+// renders sprites
 void Game::render() {
     SDL_SetRenderDrawColor(m_renderer, 154, 132, 28, 255);
     SDL_RenderClear(m_renderer);
@@ -95,11 +100,11 @@ void Game::render() {
 // initialize new level
 void Game::onInit() {
 
-    m_player.setY(m_height - m_player.rect().h - 15);
-    m_player.setX((m_width - m_player.rect().w) / 2);
+    m_player.resetRect();
 
-    m_rising_lava.resetRising();
-    m_rising_lava.setRiseRate(m_current_score + 1);
+    m_rising_lava.stopRising();
+    m_rising_lava.resetRect();
+    m_rising_lava.setRiseValue(m_current_score + 1);
 
     m_lava_pools.setPoolDensity(m_current_score + 1);
     m_lava_pools.generatePools();
@@ -109,13 +114,14 @@ void Game::onInit() {
     setState(State::PLAY);
 }
 
-// wait for user input to un-pause
+// pause game play, WAIT for user input
 void Game::onPause() {
 
     m_rising_lava.stopRising();
 
     SDL_Event event;
 
+    // wait for input; check for quit, reset, or resume
     while (SDL_WaitEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
@@ -138,11 +144,13 @@ void Game::onPause() {
     }
 }
 
+// main function for game play
 void Game::onPlay() {
     Uint32 frame_start = SDL_GetTicks();
 
     SDL_Event event;
 
+    // check for quit, reset, or pause
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
@@ -160,32 +168,40 @@ void Game::onPlay() {
         }
     }
 
-    int moveBy = m_controls.spaceKey() ? Speed::HIGH : Speed::LOW;
+    // holding space bar increase player speed
+    int moveBy = m_controls.spaceKey() ? PlayerSpeed::HIGH : PlayerSpeed::LOW;
 
+    // ignore down/up arrows unless only 1 is being pressed, XOR
     if (m_controls.downKey() ^ m_controls.upKey()) {
         m_player.incY(m_controls.downKey() ? moveBy : -moveBy);
     }
 
+    // ignore left/right arrows unless only 1 is being pressed, XOR
     if (m_controls.rightKey() ^ m_controls.leftKey()) {
         m_player.incX(m_controls.rightKey() ? moveBy : -moveBy);
     }
 
+    // keep player in horizontal bounds
     if (m_player.rect().x < 0) {
         m_player.setX(0);
     } else if (m_player.rect().x + m_player.rect().w > m_width) {
         m_player.setX(m_width - m_player.rect().w);
     }
 
-    if (m_player.rect().y + m_player.rect().h > m_height) {
+    // keep player in vertical bounds
+    // no longer needed since rising lava is at bottom and goal is at top
+    /*if (m_player.rect().y + m_player.rect().h > m_height) {
         m_player.setY(m_height - m_player.rect().h);
-    }
+    }*/
 
+    // check if player entered or exited lava pools zone to trigger rising lava
     if (!m_rising_lava.isRising() && m_player.isCollide(m_lava_pools)) {
         m_rising_lava.startRising();
     } else if (m_rising_lava.isRising() && !m_player.isCollide(m_lava_pools)) {
         m_rising_lava.stopRising();
     }
 
+    // check if player made it to goal
     if (m_player.isCollide(m_goal)) {
         incScore();
         render();
@@ -193,12 +209,14 @@ void Game::onPlay() {
         return;
     }
 
+    // check if player died by colliding with rising lava or lava pools
     if (m_rising_lava.isCollide(m_player) || m_lava_pools.isCollide(m_player)) {
         render();
         setState(State::END);
         return;
     }
 
+    // render game components
     render();
 
     Uint32 frame_end = SDL_GetTicks();
@@ -219,6 +237,7 @@ void Game::onPlay() {
 
 }
 
+// player died or game reset with esc key
 void Game::onEnd() {
     render();
     m_rising_lava.stopRising();
@@ -226,6 +245,7 @@ void Game::onEnd() {
     setState(State::INIT);
 }
 
+// increment score and high score
 void Game::incScore() {
     ++m_current_score;
     if (m_current_score > m_high_score) {
@@ -233,10 +253,12 @@ void Game::incScore() {
     }
 }
 
+// set window title
 void Game::setTitle(const std::string &title) {
     SDL_SetWindowTitle(m_window, title.c_str());
 }
 
+// set state and update window title
 void Game::setState(const Game::State state) {
     switch (state) {
         case State::INIT:

@@ -4,6 +4,7 @@
 
 #include "LavaPools.hpp"
 #include "Sprite.hpp"
+#include "Lava.hpp"
 #include "SDL.h"
 #include <random>
 #include <array>

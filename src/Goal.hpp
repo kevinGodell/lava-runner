@@ -17,6 +17,8 @@ public:
 
 private:
     std::vector<SDL_Rect> m_grid;
+
+    void createGrid();
 };
 
 #endif //LAVA_RUNNER_GOAL_HPP

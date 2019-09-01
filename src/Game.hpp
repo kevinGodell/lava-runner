@@ -22,7 +22,7 @@ public:
         END
     };
 
-    enum Speed {
+    enum PlayerSpeed {
         LOW = 2,
         HIGH = 5
     };
@@ -43,19 +43,21 @@ private:
     const int m_width;
     const int m_height;
     const Uint32 m_frame_delay;
-    SDL_bool m_running;
+    const Controls m_controls;
+    const Goal m_goal;
+    Player m_player;
+    LavaPools m_lava_pools;
+    RisingLava m_rising_lava;
     State m_state;
+    SDL_bool m_running;
+    int m_frame_count;
+    Uint32 m_time_stamp;
     Uint32 m_current_score;
     Uint32 m_high_score;
     SDL_Window *m_window;
     SDL_Renderer *m_renderer;
-    Player m_player;
-    const Goal m_goal;
-    RisingLava m_rising_lava;
-    const Controls m_controls;
-    LavaPools m_lava_pools;
-    int m_frame_count;
-    Uint32 m_time_stamp;
+
+    void sdlInit();
 
     void onInit();
 

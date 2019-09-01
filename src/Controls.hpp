@@ -7,10 +7,11 @@
 
 #include "SDL.h"
 
+// wraps keyboard state to check if key is down
 class Controls final {
 public:
 
-    explicit Controls(const Uint8 *t_keyboard_state);
+    explicit Controls(const Uint8 *t_keyboard_state); 
 
     SDL_bool upKey() const;
 
