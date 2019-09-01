@@ -17,9 +17,9 @@ Game::Game(const Uint32 t_width, const Uint32 t_height, const Uint32 t_fps) :
         m_renderer(nullptr),
         m_player(0, 0, 20, 20),
         m_goal(0, 0, m_width, 20),
-        m_rising_lava(0, m_height - 2, m_width, 2, 1, 100),
+        m_rising_lava(0, m_height - 2, m_width, 2),
         m_controls(SDL_GetKeyboardState(nullptr)),
-        m_lava_pools(0, 70, m_width, m_height - 170),
+        m_lava_pools(0, 60, m_width, m_height - 110),
         m_frame_count(0),
         m_time_stamp(0) {
 
@@ -95,7 +95,7 @@ void Game::render() {
 // initialize new level
 void Game::onInit() {
 
-    m_player.setY(m_height - m_player.rect().h - 40);
+    m_player.setY(m_height - m_player.rect().h - 15);
     m_player.setX((m_width - m_player.rect().w) / 2);
 
     m_rising_lava.resetRising();
@@ -239,7 +239,7 @@ void Game::setTitle(const std::string &title) {
 
 void Game::setState(const Game::State state) {
     std::string status;
-    switch(state) {
+    switch (state) {
         case State::INIT:
             status = "initializing";
             setTitle("Status: initializing, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score));

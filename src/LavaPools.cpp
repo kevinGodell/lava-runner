@@ -6,10 +6,11 @@
 #include "Sprite.hpp"
 #include "SDL.h"
 #include <random>
+#include <array>
 
 LavaPools::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         Sprite(t_x, t_y, t_w, t_h),
-        m_pool_density(1.0),
+        m_pool_density(1),
         m_pool_height(10),
         m_pool_width(50),
         m_vertical_gap(50) {}
@@ -29,13 +30,13 @@ SDL_bool LavaPools::isCollide(const Sprite &t_other_sprite) const {
     return SDL_FALSE;
 }
 
-void LavaPools::setPoolDensity(const double t_pool_density) {
-    if (t_pool_density > 7.0) {
-        m_pool_density = 7.0;
+void LavaPools::setPoolDensity(const int t_pool_density) {
+    if (t_pool_density > 7) {
+        m_pool_density = 7;
         return;
     }
-    if (t_pool_density < 1.0) {
-        m_pool_density = 1.0;
+    if (t_pool_density < 1) {
+        m_pool_density = 1;
         return;
     }
     m_pool_density = t_pool_density;
@@ -47,7 +48,8 @@ void LavaPools::generatePools() {
     int cols = m_rect.w / m_pool_width;
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::discrete_distribution<int> dd({(10 - m_pool_density), m_pool_density});
+    std::array<int, 2> init{10 - m_pool_density, m_pool_density};
+    std::discrete_distribution<int> dd(init.begin(), init.end());
     for (int row = 0, y = m_rect.y; row < rows; ++row, y += (m_pool_height + m_vertical_gap)) {
         bool row_has_space = false;//make sure that entire row is not filled with lava blocking safe passage
         for (int col = 0, x = m_rect.x; col < cols; ++col, x += m_pool_width) {

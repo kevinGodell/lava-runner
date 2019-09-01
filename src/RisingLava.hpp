@@ -12,7 +12,7 @@
 
 class RisingLava : public Lava {
 public:
-    RisingLava(int t_x, int t_y, int t_w, int t_h, Uint32 t_rise_rate = 1, Uint32 t_rise_interval = 100);
+    RisingLava(int t_x, int t_y, int t_w, int t_h);
 
     ~RisingLava() override;
 
@@ -34,8 +34,8 @@ public:
 private:
     const Uint32 m_rise_start_y;
     const Uint32 m_rise_start_h;
+    const Uint32 m_rise_interval;
     Uint32 m_rise_rate;
-    Uint32 m_rise_interval;
     SDL_bool m_is_rising;
     std::thread m_rising_thread;
     mutable std::mutex m_mutex;

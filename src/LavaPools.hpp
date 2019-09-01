@@ -20,11 +20,11 @@ public:
 
     void generatePools();
 
-    void setPoolDensity(double t_pool_density);
+    void setPoolDensity(int t_pool_density);
 
 private:
     std::vector<Lava> m_lava_pools;
-    double m_pool_density;
+    int m_pool_density;
     int m_pool_height;
     int m_pool_width;
     int m_vertical_gap;

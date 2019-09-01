@@ -4,12 +4,12 @@
 
 #include "RisingLava.hpp"
 
-RisingLava::RisingLava(int t_x, int t_y, int t_w, int t_h, Uint32 t_rise_rate, Uint32 t_rise_interval) :
+RisingLava::RisingLava(int t_x, int t_y, int t_w, int t_h) :
         Lava(t_x, t_y, t_w, t_h),
         m_rise_start_y(t_y),
         m_rise_start_h(t_h),
-        m_rise_rate(t_rise_rate),
-        m_rise_interval(t_rise_interval),
+        m_rise_interval(100),
+        m_rise_rate(1),
         m_is_rising(SDL_FALSE) {}
 
 RisingLava::~RisingLava() {
