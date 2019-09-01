@@ -40,10 +40,10 @@ Game::Game(const Uint32 t_width, const Uint32 t_height, const Uint32 t_fps) :
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
 
     if (!m_renderer) {
-        SDL_Log("Unable to create renderer: %s", SDL_GetError());
+        SDL_Log("Unable to create accelerated renderer: %s", SDL_GetError());
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
         if (!m_renderer) {
-            SDL_Log("Unable to create renderer: %s", SDL_GetError());
+            SDL_Log("Unable to create software renderer: %s", SDL_GetError());
             SDL_Quit();
             exit(1);
         }
