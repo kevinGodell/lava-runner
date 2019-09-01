@@ -238,10 +238,8 @@ void Game::setTitle(const std::string &title) {
 }
 
 void Game::setState(const Game::State state) {
-    std::string status;
     switch (state) {
         case State::INIT:
-            status = "initializing";
             setTitle("Status: initializing, Score: " + std::to_string(m_current_score) + ", High Score: " + std::to_string(m_high_score));
             SDL_Delay(500);
             break;
