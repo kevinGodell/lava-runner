@@ -1,6 +1,7 @@
 # Lava Runner
 Lava Runner is a 2-D obstacle game built using the SDL library.
 
+![Lava Runner Demo](lava_runner_demo.gif)
 ## Game Play
 The player starts at the bottom and must reach the goal at the top without coming in contact with lava.
 The lava obstacles include a field of lava pools and rising lava.
