@@ -12,7 +12,6 @@
 #include <array>
 #include <vector>
 #include <memory>
-#include <iostream>
 
 template <int min, int max>
 class LavaPools final : public Sprite {
@@ -81,19 +80,12 @@ void LavaPools<min, max>::generatePools() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::array<int, 2> init{min + max - m_pool_density, m_pool_density};
-    std::cout << min << std::endl;
-    std::cout << max << std::endl;
-    std::cout << m_pool_density << std::endl;
-    std::cout << "min weight " << *init.begin() << std::endl;
-    std::cout << "max weight " << *(init.end()-1) << std::endl;
     std::discrete_distribution<int> dd(init.begin(), init.end());
-    int count = 0;
     for (int row = 0, y = m_rect.y; row < rows; ++row, y += (m_pool_height + m_vertical_gap)) {
         bool row_has_space = false;//make sure that entire row is not filled with lava blocking safe passage
         for (int col = 0, x = m_rect.x; col < cols; ++col, x += m_pool_width) {
             if (dd(gen)) {
                 m_lava_pools.emplace_back(std::make_unique<const Lava>(x, y, m_pool_width, m_pool_height));
-                ++count;
             } else {
                 row_has_space = true;
             }
@@ -102,7 +94,6 @@ void LavaPools<min, max>::generatePools() {
             m_lava_pools.pop_back();
         }
     }
-    std::cout << "count " << count << std::endl;
 }
 
 #endif //LAVA_RUNNER_LAVAPOOLS_HPP
