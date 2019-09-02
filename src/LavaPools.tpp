@@ -13,7 +13,7 @@
 #include <vector>
 #include <memory>
 
-template <int min, int max>
+template<int min, int max>
 class LavaPools final : public Sprite {
 public:
     LavaPools(int t_x, int t_y, int t_w, int t_h);
@@ -34,7 +34,7 @@ private:
     std::vector<std::unique_ptr<const Lava>> m_lava_pools;
 };
 
-template <int min, int max>
+template<int min, int max>
 LavaPools<min, max>::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         Sprite(t_x, t_y, t_w, t_h),
         m_pool_height(10),
@@ -42,7 +42,7 @@ LavaPools<min, max>::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         m_vertical_gap(50),
         m_pool_density(min) {}
 
-template <int min, int max>
+template<int min, int max>
 void LavaPools<min, max>::render(SDL_Renderer *t_renderer) const {
     SDL_SetRenderDrawColor(t_renderer, 142, 113, 12, 255);
     SDL_RenderFillRect(t_renderer, &m_rect);
@@ -51,7 +51,7 @@ void LavaPools<min, max>::render(SDL_Renderer *t_renderer) const {
     }
 }
 
-template <int min, int max>
+template<int min, int max>
 SDL_bool LavaPools<min, max>::isCollide(const Sprite &t_other_sprite) const {
     for (const std::unique_ptr<const Lava> &lava_pool : m_lava_pools) {
         if (lava_pool->isCollide(t_other_sprite)) return SDL_TRUE;
@@ -59,7 +59,7 @@ SDL_bool LavaPools<min, max>::isCollide(const Sprite &t_other_sprite) const {
     return SDL_FALSE;
 }
 
-template <int min, int max>
+template<int min, int max>
 void LavaPools<min, max>::setPoolDensity(const int t_pool_density) {
     if (t_pool_density > max) {
         m_pool_density = max;
@@ -72,7 +72,7 @@ void LavaPools<min, max>::setPoolDensity(const int t_pool_density) {
     m_pool_density = t_pool_density;
 }
 
-template <int min, int max>
+template<int min, int max>
 void LavaPools<min, max>::generatePools() {
     m_lava_pools.clear();
     int rows = (m_rect.h + m_vertical_gap) / (m_pool_height + m_vertical_gap);
