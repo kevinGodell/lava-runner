@@ -8,7 +8,7 @@
 #include "Player.hpp"
 #include "Goal.hpp"
 #include "RisingLava.hpp"
-#include "LavaPools.hpp"
+#include "LavaPools.tpp"
 #include "Controls.hpp"
 #include "SDL.h"
 #include <string>
@@ -46,7 +46,7 @@ private:
     const Controls m_controls;
     const Goal m_goal;
     Player m_player;
-    LavaPools m_lava_pools;
+    LavaPools<2, 7> m_lava_pools;
     RisingLava m_rising_lava;
     State m_state;
     SDL_bool m_running;
