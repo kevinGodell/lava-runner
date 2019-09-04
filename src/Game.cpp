@@ -46,13 +46,13 @@ void Game::sdlInit() {
     }
 
     // try to create accelerated renderer first
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
 
     if (!m_renderer) {
         SDL_Log("Unable to create accelerated renderer: %s", SDL_GetError());
 
         // fallback to software renderer
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE|SDL_RENDERER_PRESENTVSYNC);
 
         if (!m_renderer) {
             SDL_Log("Unable to create software renderer: %s", SDL_GetError());
