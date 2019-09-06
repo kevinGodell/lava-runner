@@ -13,7 +13,7 @@
 #include <vector>
 #include <memory>
 
-template<int min, int max>
+template<Uint32 min, Uint32 max>
 class LavaPools final : public Sprite {
 public:
     LavaPools(int t_x, int t_y, int t_w, int t_h);
@@ -22,7 +22,7 @@ public:
 
     SDL_bool isCollide(const Sprite &t_other_sprite) const override;// check if sprites collide
 
-    void setPoolDensity(int t_pool_density);// change density of random lava pools
+    void setPoolDensity(Uint32 t_pool_density);// change density of random lava pools
 
     void generatePools();// create lava and add to m_lava_pools
 
@@ -30,19 +30,22 @@ private:
     const int m_pool_height;
     const int m_pool_width;
     const int m_vertical_gap;
-    int m_pool_density;
+    Uint32 m_pool_density;
     std::vector<std::unique_ptr<const Lava>> m_lava_pools;
 };
 
-template<int min, int max>
+template<Uint32 min, Uint32 max>
 LavaPools<min, max>::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         Sprite(t_x, t_y, t_w, t_h),
         m_pool_height(10),
         m_pool_width(50),
         m_vertical_gap(50),
-        m_pool_density(min) {}
+        m_pool_density(min) {
 
-template<int min, int max>
+    static_assert(min > 0 && max > min, "min must be greater than 0 and less than max");
+        }
+
+template<Uint32 min, Uint32 max>
 void LavaPools<min, max>::render(SDL_Renderer *t_renderer) const {
     SDL_SetRenderDrawColor(t_renderer, 142, 113, 12, 255);
     SDL_RenderFillRect(t_renderer, &m_rect);
@@ -51,7 +54,7 @@ void LavaPools<min, max>::render(SDL_Renderer *t_renderer) const {
     }
 }
 
-template<int min, int max>
+template<Uint32 min, Uint32 max>
 SDL_bool LavaPools<min, max>::isCollide(const Sprite &t_other_sprite) const {
     for (const std::unique_ptr<const Lava> &lava_pool : m_lava_pools) {
         if (lava_pool->isCollide(t_other_sprite)) return SDL_TRUE;
@@ -59,8 +62,8 @@ SDL_bool LavaPools<min, max>::isCollide(const Sprite &t_other_sprite) const {
     return SDL_FALSE;
 }
 
-template<int min, int max>
-void LavaPools<min, max>::setPoolDensity(const int t_pool_density) {
+template<Uint32 min, Uint32 max>
+void LavaPools<min, max>::setPoolDensity(const Uint32 t_pool_density) {
     if (t_pool_density > max) {
         m_pool_density = max;
         return;
@@ -72,15 +75,15 @@ void LavaPools<min, max>::setPoolDensity(const int t_pool_density) {
     m_pool_density = t_pool_density;
 }
 
-template<int min, int max>
+template<Uint32 min, Uint32 max>
 void LavaPools<min, max>::generatePools() {
     m_lava_pools.clear();
     int rows = (m_rect.h + m_vertical_gap) / (m_pool_height + m_vertical_gap);
     int cols = m_rect.w / m_pool_width;
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::array<int, 2> init{min + max - m_pool_density, m_pool_density};
-    std::discrete_distribution<int> dd(init.begin(), init.end());
+    std::array<Uint32, 2> init{min + max - m_pool_density, m_pool_density};
+    std::discrete_distribution<Uint32> dd(init.begin(), init.end());
     for (int row = 0, y = m_rect.y; row < rows; ++row, y += (m_pool_height + m_vertical_gap)) {
         bool row_has_space = false;//make sure that entire row is not filled with lava blocking safe passage
         for (int col = 0, x = m_rect.x; col < cols; ++col, x += m_pool_width) {
