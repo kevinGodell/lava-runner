@@ -40,10 +40,7 @@ LavaPools<min, max>::LavaPools(int t_x, int t_y, int t_w, int t_h) :
         m_pool_height(10),
         m_pool_width(50),
         m_vertical_gap(50),
-        m_pool_density(min) {
-
-    static_assert(min > 0 && max > min, "min must be greater than 0 and less than max");
-        }
+        m_pool_density(min) { static_assert(min > 0 && max > min, "min must be greater than 0 and less than max"); }
 
 template<Uint32 min, Uint32 max>
 void LavaPools<min, max>::render(SDL_Renderer *t_renderer) const {
