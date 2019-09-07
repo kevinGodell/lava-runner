@@ -46,7 +46,7 @@ void Game::sdlInit() {
     }
 
     // try to create accelerated renderer first
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (!m_renderer) {
         SDL_Log("Unable to create accelerated renderer: %s", SDL_GetError());
@@ -169,7 +169,7 @@ void Game::onPlay() {
     }
 
     // holding space bar increase player speed
-    int moveBy = m_controls.spaceKey() ? PlayerSpeed::HIGH : PlayerSpeed::LOW;
+    int moveBy = m_controls.spaceKey() ? PLAYER_SPEED_HIGH : PLAYER_SPEED_LOW;
 
     // ignore down/up arrows unless only 1 is being pressed, XOR
     if (m_controls.downKey() ^ m_controls.upKey()) {

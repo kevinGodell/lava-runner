@@ -8,7 +8,7 @@
 #include "Player.hpp"
 #include "Goal.hpp"
 #include "RisingLava.hpp"
-#include "LavaPools.tpp"
+#include "LavaPools.hpp"
 #include "Controls.hpp"
 #include "SDL.h"
 #include <string>
@@ -22,9 +22,13 @@ public:
         END
     };
 
-    enum PlayerSpeed {
-        LOW = 2,
-        HIGH = 5
+    enum Config {
+        PLAYER_SPEED_LOW = 2,
+        PLAYER_SPEED_HIGH = 5,
+        LAVA_POOLS_MIN_DENSITY = 3,
+        LAVA_POOLS_MAX_DENSITY = 6,
+        RISING_LAVA_MIN_RISE = 2,
+        RISING_LAVA_MAX_RISE = 7,
     };
 
     Game(Uint32 t_width, Uint32 t_height, Uint32 t_fps);
@@ -46,8 +50,8 @@ private:
     const Controls m_controls;
     const Goal m_goal;
     Player m_player;
-    LavaPools<2, 7> m_lava_pools;
-    RisingLava m_rising_lava;
+    LavaPools<LAVA_POOLS_MIN_DENSITY, LAVA_POOLS_MAX_DENSITY> m_lava_pools;
+    RisingLava<RISING_LAVA_MIN_RISE, RISING_LAVA_MAX_RISE> m_rising_lava;
     State m_state;
     SDL_bool m_running;
     int m_frame_count;
